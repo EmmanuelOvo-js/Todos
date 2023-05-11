@@ -43,6 +43,7 @@ CreateTodo = (e) => {
 
   fetch(todoAPI, {
     method: 'POST',
+    mode: 'cors',
     body: JSON.stringify(newTodo),
     headers: {
       'Content-Type': 'application/json'
@@ -65,12 +66,12 @@ toggleCompleted = (e) => {
 updateTodoList = (id, completed) => {
   fetch(`${todoAPI}/${id}`, {
     method: 'PUT',
+    mode: 'cors',
     body: JSON.stringify({ completed }),
     headers: {
       'Content-Type': 'application/json'
     }
-  }).then(res => res.json())
-    .then((data) => console.log(data))
+  })
 }
 
 init = () => {
