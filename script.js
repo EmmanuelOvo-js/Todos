@@ -1,3 +1,4 @@
+const input = document.querySelector('#todo-form').firstElementChild
 const todoAPI = 'https://jsonplaceholder.typicode.com/todos'
 
 fetchTodos = () => {
@@ -21,6 +22,11 @@ pushTodoToDOM = (todoData) => {
   div.classList.add('todo') //used for toggle event
   div.appendChild(document.createTextNode(todoData.title))
   div.setAttribute('data-id', todoData.id)
+  const icon = document.createElement('i')
+  icon.classList.add('fa-solid', 'fa-xmark', 'del')
+  icon.style.color = 'red'
+  icon.style.padding = '1rem'
+  div.appendChild(icon)
 
   //check for completed todo
   if (todoData.completed) {
@@ -30,6 +36,9 @@ pushTodoToDOM = (todoData) => {
   //push to DOM
   document.querySelector('#todo-list').appendChild(div)
   // console.log(div)
+
+  // clears input field
+  input.value = ''
 }
 
 //Create Function
@@ -43,7 +52,6 @@ CreateTodo = (e) => {
 
   fetch(todoAPI, {
     method: 'POST',
-    mode: 'cors',
     body: JSON.stringify(newTodo),
     headers: {
       'Content-Type': 'application/json'
@@ -66,7 +74,6 @@ toggleCompleted = (e) => {
 updateTodoList = (id, completed) => {
   fetch(`${todoAPI}/${id}`, {
     method: 'PUT',
-    mode: 'cors',
     body: JSON.stringify({ completed }),
     headers: {
       'Content-Type': 'application/json'
@@ -74,10 +81,29 @@ updateTodoList = (id, completed) => {
   })
 }
 
+deleteTodo = (e) => {
+  if (e.target.classList.contains('del')) {
+
+    const id = e.target.dataset.id
+
+    fetch(`${todoAPI}/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then((res) => res.json())
+      .then(() => {
+        e.target.parentElement.remove()
+      })
+  }
+}
+
+
 init = () => {
   document.addEventListener('DOMContentLoaded', fetchTodos)
   document.querySelector('#todo-form').addEventListener('submit', CreateTodo)
   document.querySelector('#todo-list').addEventListener('click', toggleCompleted)
+  document.querySelector('#todo-list').addEventListener('click', deleteTodo)
 }
 
 init()
